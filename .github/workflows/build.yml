@@ -1,0 +1,55 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Swift のバージョン
+        run: swift --version
+
+      - name: テストケースを参照実装で確認
+        run: node tools/check-fixtures.mjs
+
+      - name: テスト
+        run: swift test
+
+      - name: 版の番号を決める
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+            echo "DMG_NAME=CleanBunsho-${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+          else
+            echo "VERSION=0.0.0" >> "$GITHUB_ENV"
+            echo "DMG_NAME=CleanBunsho-dev-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+          fi
+          echo "BUILD_NUMBER=${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
+
+      - name: ビルド・署名・.dmg 作成
+        run: bash scripts/build-app.sh
+
+      - name: Artifacts に置く
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.DMG_NAME }}
+          path: dist/*.dmg
+
+      - name: Releases に公開（v で始まるタグのとき）
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/*.dmg \
+            --title "くりーんぶんしょ $GITHUB_REF_NAME" \
+            --notes-file scripts/release-notes.md

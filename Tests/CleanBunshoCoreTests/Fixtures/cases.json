@@ -1,0 +1,261 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "name": "変更なし",
+      "input": "こんにちは、世界。\nHello!",
+      "expected": "こんにちは、世界。\nHello!",
+      "removed": 0,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "ゼロ幅スペース",
+      "input": "AIが\u200b生成した\u200b文章",
+      "expected": "AIが生成した文章",
+      "removed": 2,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "ZWNJ・WJ・BOM・ソフトハイフン",
+      "input": "\ufeffテ\u200cキ\u2060ス\u00adト",
+      "expected": "テキスト",
+      "removed": 4,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "不可視の演算子・CGJ・モンゴル母音区切り",
+      "input": "a\u2062b\u034fc\u180ed",
+      "expected": "abcd",
+      "removed": 3,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "ハングルのフィラー",
+      "input": "x\u3164y\uffa0z",
+      "expected": "xyz",
+      "removed": 2,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "書字方向の制御文字",
+      "input": "abc\u202edef\u202c\u200eghi\u2066j\u2069\u200f",
+      "expected": "abcdefghij",
+      "removed": 6,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "タグ文字",
+      "input": "hi\udb40\udc41\udb40\udc42\udb40\udc7f!",
+      "expected": "hi!",
+      "removed": 3,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "旗の絵文字のタグ文字は残す",
+      "input": "Go 🏴\udb40\udc67\udb40\udc62\udb40\udc73\udb40\udc63\udb40\udc74\udb40\udc7f!",
+      "expected": "Go 🏴\udb40\udc67\udb40\udc62\udb40\udc73\udb40\udc63\udb40\udc74\udb40\udc7f!",
+      "removed": 0,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "C0/C1 制御文字（タブ・改行は残す）",
+      "input": "a\u0000b\u0007c\td\u001be\u0080f\u009fg\nh",
+      "expected": "abc\tdefg\nh",
+      "removed": 5,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "DEL",
+      "input": "a\u007fb",
+      "expected": "ab",
+      "removed": 1,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "特殊な空白",
+      "input": "a\u00a0b\u2003c\u202fd\u205fe\u2009f",
+      "expected": "a b c d e f",
+      "removed": 0,
+      "replaced": 5,
+      "options": {}
+    },
+    {
+      "name": "全角スペースは既定で残す",
+      "input": "日本語\u3000テキスト",
+      "expected": "日本語\u3000テキスト",
+      "removed": 0,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "全角スペースをオンにすると置換",
+      "input": "日本語\u3000テキスト",
+      "expected": "日本語 テキスト",
+      "removed": 0,
+      "replaced": 1,
+      "options": {"ideographicSpace": true}
+    },
+    {
+      "name": "行区切り文字は改行に",
+      "input": "一行目\u2028二行目\u2029三行目\u0085四行目",
+      "expected": "一行目\n二行目\n三行目\n四行目",
+      "removed": 0,
+      "replaced": 3,
+      "options": {}
+    },
+    {
+      "name": "CRLF と CR を LF に（数えない）",
+      "input": "a\r\nb\rc\n",
+      "expected": "a\nb\nc",
+      "removed": 0,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "改行コードをオフ",
+      "input": "a\r\nb",
+      "expected": "a\r\nb",
+      "removed": 0,
+      "replaced": 0,
+      "options": {"newline": false}
+    },
+    {
+      "name": "行末の空白",
+      "input": "a  \nb\t\nc \t ",
+      "expected": "a\nb\nc",
+      "removed": 0,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "先頭と末尾の空白・改行",
+      "input": "\n\n  本文です。  \n\n",
+      "expected": "本文です。",
+      "removed": 0,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "全角スペースの字下げは残す",
+      "input": "\n\u3000本文です。\n",
+      "expected": "\u3000本文です。",
+      "removed": 0,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "先頭と末尾をオフ",
+      "input": "  a  ",
+      "expected": "  a",
+      "removed": 0,
+      "replaced": 0,
+      "options": {"trim": false}
+    },
+    {
+      "name": "行末と先頭末尾の両方をオフ",
+      "input": "  a  ",
+      "expected": "  a  ",
+      "removed": 0,
+      "replaced": 0,
+      "options": {"trim": false, "trailingWhitespace": false}
+    },
+    {
+      "name": "続きすぎた空行は既定で残す",
+      "input": "a\n\n\n\nb",
+      "expected": "a\n\n\n\nb",
+      "removed": 0,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "続きすぎた空行をまとめる",
+      "input": "a\n\n\n\nb\n\n\nc\n\n\n\n\n\nd",
+      "expected": "a\n\nb\n\n\nc\n\nd",
+      "removed": 0,
+      "replaced": 0,
+      "options": {"collapseBlankLines": true}
+    },
+    {
+      "name": "空白だけの行も空行として扱う",
+      "input": "a\n  \n \t\n\t\nb",
+      "expected": "a\n\nb",
+      "removed": 0,
+      "replaced": 0,
+      "options": {"collapseBlankLines": true}
+    },
+    {
+      "name": "カーリークォートは既定で残す",
+      "input": "“Hi” ‘a’",
+      "expected": "“Hi” ‘a’",
+      "removed": 0,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "カーリークォートを置換",
+      "input": "“Hi” it’s ‘a’",
+      "expected": "\"Hi\" it's 'a'",
+      "removed": 0,
+      "replaced": 5,
+      "options": {"curlyQuotes": true}
+    },
+    {
+      "name": "ダッシュを置換",
+      "input": "A—B–C",
+      "expected": "A-B-C",
+      "removed": 0,
+      "replaced": 2,
+      "options": {"dashes": true}
+    },
+    {
+      "name": "絵文字の ZWJ は残す",
+      "input": "👨\u200d👩\u200d👧❤\ufe0f\u200d🔥👩🏻\u200d💻",
+      "expected": "👨\u200d👩\u200d👧❤\ufe0f\u200d🔥👩🏻\u200d💻",
+      "removed": 0,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "文字の間の ZWJ は消す",
+      "input": "テ\u200dキスト😀\u200da",
+      "expected": "テキスト😀a",
+      "removed": 2,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "異体字セレクタは触らない",
+      "input": "葛\udb40\udd00 ☺\ufe0f",
+      "expected": "葛\udb40\udd00 ☺\ufe0f",
+      "removed": 0,
+      "replaced": 0,
+      "options": {}
+    },
+    {
+      "name": "ルールをオフにすると残る",
+      "input": "a\u200bb",
+      "expected": "a\u200bb",
+      "removed": 0,
+      "replaced": 0,
+      "options": {"zeroWidth": false}
+    },
+    {
+      "name": "まとめて",
+      "input": "\ufeff  AIの\u200b回答です\u00a0。\r\n\u202e結論\u202c：OK  \r\n",
+      "expected": "AIの回答です 。\n結論：OK",
+      "removed": 4,
+      "replaced": 1,
+      "options": {}
+    }
+  ]
+}
